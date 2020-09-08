@@ -41,3 +41,4 @@ app.post("/login", loginMiddleWare, (req, res) => {
    res.send(jwt.encode(payload, SECRET));
 });
 app.listen(3000);
+
