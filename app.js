@@ -1,8 +1,10 @@
 /* import library ที่จำเป็นทั้งหมด */
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const app = express();
 app.use(bodyParser.json());
+
 const jwt = require("jwt-simple");
 const passport = require("passport");
 //ใช้ในการ decode jwt ออกมา
@@ -16,7 +18,7 @@ const jwtOptions = {
    secretOrKey: SECRET
 };
 const jwtAuth = new JwtStrategy(jwtOptions, (payload, done) => {
-   if (payload.sub === "kennaruk") done(null, true);
+   if (payload.sub === "username") done(null, true);
    else done(null, false);
 });
 //เสียบ Strategy เข้า Passport
@@ -25,12 +27,12 @@ passport.use(jwtAuth);
 const requireJWTAuth = passport.authenticate("jwt",{session:false});
 //เสียบ middleware ยืนยันตัวตน JWT เข้าไป
 app.get("/", requireJWTAuth, (req, res) => {
-   res.send("ยอดเงินคงเหลือ 50");
+   res.send("ส้มหยุด แต่งานไม่หยุด");
 });
 //ทำ Middleware สำหรับขอ JWT
 const loginMiddleWare = (req, res, next) => {
-   if (req.body.username === "kennaruk" 
-   && req.body.password === "mak") next();
+   if (req.body.username === "username" 
+   && req.body.password === "password") next();
    else res.send("Wrong username and password");
 };
 app.post("/login", loginMiddleWare, (req, res) => {
@@ -38,6 +40,6 @@ app.post("/login", loginMiddleWare, (req, res) => {
       sub: req.body.username,
       iat: new Date().getTime()
    };
-   res.send(jwt.encode(payload, SECRET));
+   res.send("Token: "+jwt.encode(payload, SECRET));
 });
 app.listen(3000);
